@@ -1,6 +1,8 @@
 import userEvent from "@testing-library/user-event";
 import Options, { OptionType } from "../Options";
 import { render, screen } from "../../../test-utils/testing-library-utils";
+import OrderEntry from "../OrderEntry";
+import exp from "constants";
 
 test("update scoops subtotal when scoops change", async () => {
   const user = userEvent.setup();
@@ -47,4 +49,61 @@ test("update toppings subtotal when toppings change", async () => {
   expect(toppingsSubtotal).toHaveTextContent("3.00");
   await user.click(hotFudgeElement);
   expect(toppingsSubtotal).toHaveTextContent("1.50");
+});
+
+describe("Grand total ", () => {
+  test("grand total starts at 0", () => {
+    const { unmount } = render(<OrderEntry />);
+    const grandTotal = screen.getByRole("heading", { name: /Grand total:/i });
+    expect(grandTotal).toHaveTextContent("0.00");
+    unmount();
+  });
+  test("grand total updates properly if scoop is added", async () => {
+    const user = userEvent.setup();
+    render(<OrderEntry />);
+    const grandTotal = screen.getByRole("heading", { name: /Grand total:/i });
+    //scoop
+    const vanillaInput = await screen.findByRole("spinbutton", {
+      name: "Vanilla",
+    });
+    await user.clear(vanillaInput);
+    await user.type(vanillaInput, "2");
+    expect(grandTotal).toHaveTextContent("4.00");
+    //topping
+    const mAndM = await screen.findByRole("checkbox", {
+      name: "M&Ms",
+    });
+    await user.click(mAndM);
+    expect(grandTotal).toHaveTextContent("5.50");
+  });
+  test("grand total updates properly if topping is added", async () => {
+    const user = userEvent.setup();
+    render(<OrderEntry />);
+    const grandTotal = screen.getByRole("heading", { name: /Grand total:/i });
+    //topping
+    const mAndM = await screen.findByRole("checkbox", {
+      name: "M&Ms",
+    });
+    await user.click(mAndM);
+    expect(grandTotal).toHaveTextContent("1.50");
+    const vanillaInput = await screen.findByRole("spinbutton", {
+      name: "Vanilla",
+    });
+    await user.clear(vanillaInput);
+    await user.type(vanillaInput, "2");
+    expect(grandTotal).toHaveTextContent("5.50");
+  });
+  test("grand total updates properly if item is removed", async () => {
+    const user = userEvent.setup();
+    render(<OrderEntry />);
+    const grandTotal = screen.getByRole("heading", { name: /Grand total:/i });
+    const vanillaInput = await screen.findByRole("spinbutton", {
+      name: "Vanilla",
+    });
+    await user.clear(vanillaInput);
+    await user.type(vanillaInput, "2");
+    expect(grandTotal).toHaveTextContent("4.00");
+    await user.type(vanillaInput, "0");
+    expect(grandTotal).toHaveTextContent("0.00");
+  });
 });

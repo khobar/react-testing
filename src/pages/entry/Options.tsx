@@ -24,15 +24,22 @@ const Options = ({ optionType }: IOptions) => {
   const { totals } = useOrderDetails();
 
   useEffect(() => {
+    const controller = new AbortController();
     axios
-      .get(`http://localhost:3030/${optionType}`)
+      .get(`http://localhost:3030/${optionType}`, { signal: controller.signal })
       .then((response: AxiosResponse<Option[]>) => {
         setItems(response.data);
         setError(false);
       })
-      .catch(() => {
-        setError(true);
+      .catch((error) => {
+        if (error.name !== "CanceledError") {
+          setError(true);
+        }
       });
+    //abort axios call on component umount
+    return () => {
+      controller.abort();
+    };
   }, [optionType]);
 
   const ItemComponent =
