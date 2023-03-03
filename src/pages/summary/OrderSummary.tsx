@@ -17,10 +17,19 @@ export const OrderSummary = () => {
   return (
     <>
       <h1>Order Summary</h1>
-      <h2>Scoops : {formatCurrency(totals.scoops)}</h2>
-      <ul>{scoopList}</ul>
-      <h2>Toppings : {formatCurrency(totals.toppings)}</h2>
-      <ul>{toppingsList}</ul>
+      {scoopList && scoopList.length > 0 ? (
+        <>
+          <h2>Scoops : {formatCurrency(totals.scoops)}</h2>
+          <ul>{scoopList}</ul>
+        </>
+      ) : null}
+      {toppingsList && toppingsList.length > 0 ? (
+        <>
+          <h2>Toppings : {formatCurrency(totals.toppings)}</h2>
+          <ul>{toppingsList}</ul>
+        </>
+      ) : null}
+
       <SummaryForm />
     </>
   );
