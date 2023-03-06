@@ -1,12 +1,15 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useMemo, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import { IOrderSettingComponent } from "../../models/IOrderSettingComponent";
 import { OrderPhase } from "../../models/Phases";
+import { useOrderDetails } from "../../contexts/OrderDetails";
 
 const SummaryForm = ({ setOrderPhase }: IOrderSettingComponent) => {
   const [tcChecked, setTcChecked] = useState(false);
+
+  const { optionCounts } = useOrderDetails();
 
   const popover = (
     <Popover id="popover-basic">
@@ -26,6 +29,9 @@ const SummaryForm = ({ setOrderPhase }: IOrderSettingComponent) => {
     event.preventDefault();
     setOrderPhase(OrderPhase.COMPLETED);
   };
+  const hasScoops = useMemo(() => {
+    return optionCounts?.scoops && optionCounts.scoops.length > 0;
+  }, [optionCounts]);
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -38,7 +44,12 @@ const SummaryForm = ({ setOrderPhase }: IOrderSettingComponent) => {
           label={checkboxLabel}
         />
       </Form.Group>
-      <Button variant="primary" type="submit" disabled={!tcChecked}>
+      {!hasScoops ? <p role="alert">There are no scoops selected!</p> : null}
+      <Button
+        variant="primary"
+        type="submit"
+        disabled={!tcChecked || !hasScoops}
+      >
         Confirm order
       </Button>
     </Form>

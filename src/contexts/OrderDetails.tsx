@@ -27,13 +27,17 @@ export function useOrderDetails() {
   }
   return context;
 }
+const defaultInitialState: OptionCounts = {
+  scoops: [], //example {Chocolate: 1, Vanilla: 2}
+  toppings: [], //example {"Gummi Bears":1}
+};
 
 export function OrderDetailsProvider(props: any) {
-  const initialState: OptionCounts = {
-    scoops: [], //example {Chocolate: 1, Vanilla: 2}
-    toppings: [], //example {"Gummi Bears":1}
-  };
-  const [optionCounts, setOptionCounts] = useState<OptionCounts>(initialState);
+  const [optionCounts, setOptionCounts] = useState<OptionCounts>(
+    props.defaults?.scoops || props.defaults?.scoops
+      ? props.defaults
+      : defaultInitialState
+  );
 
   const updateItemCount = (
     itemName: string,
@@ -60,7 +64,7 @@ export function OrderDetailsProvider(props: any) {
   };
 
   const resetOrder = () => {
-    setOptionCounts(initialState);
+    setOptionCounts(defaultInitialState);
   };
 
   const calculateTotal = (optionType: OptionType) => {
