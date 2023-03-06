@@ -1,8 +1,9 @@
 import SummaryForm from "./SummaryForm";
 import { useOrderDetails } from "../../contexts/OrderDetails";
 import { formatCurrency } from "../../utils";
+import { IOrderSettingComponent } from "../../models/IOrderSettingComponent";
 
-export const OrderSummary = () => {
+export const OrderSummary = ({ setOrderPhase }: IOrderSettingComponent) => {
   const { totals, optionCounts } = useOrderDetails();
 
   const scoopList = optionCounts?.scoops.map((option) => (
@@ -30,7 +31,7 @@ export const OrderSummary = () => {
         </>
       ) : null}
 
-      <SummaryForm />
+      <SummaryForm setOrderPhase={setOrderPhase} />
     </>
   );
 };

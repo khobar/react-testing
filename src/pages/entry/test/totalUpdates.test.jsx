@@ -2,7 +2,6 @@ import userEvent from "@testing-library/user-event";
 import Options, { OptionType } from "../Options";
 import { render, screen } from "../../../test-utils/testing-library-utils";
 import OrderEntry from "../OrderEntry";
-import exp from "constants";
 
 test("update scoops subtotal when scoops change", async () => {
   const user = userEvent.setup();

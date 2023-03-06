@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { OverlayTrigger, Popover } from "react-bootstrap";
-const SummaryForm = () => {
+import { IOrderSettingComponent } from "../../models/IOrderSettingComponent";
+import { OrderPhase } from "../../models/Phases";
+
+const SummaryForm = ({ setOrderPhase }: IOrderSettingComponent) => {
   const [tcChecked, setTcChecked] = useState(false);
 
   const popover = (
@@ -19,11 +22,17 @@ const SummaryForm = () => {
     </span>
   );
 
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    setOrderPhase(OrderPhase.COMPLETED);
+  };
+
   return (
-    <Form>
+    <Form onSubmit={handleSubmit}>
       <Form.Group controlId="terms-and-conditions">
         <Form.Check
           type="checkbox"
+          data-testid="confirm-terms"
           checked={tcChecked}
           onChange={(e) => setTcChecked(e.target.checked)}
           label={checkboxLabel}
